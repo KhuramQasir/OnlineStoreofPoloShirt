@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const EditProduct = ({ product, updateProduct, onCancel }) => {
+const EditProduct = ({ product, existingProducts, updateProduct, onCancel }) => {
   const [form, setForm] = useState({
     id: '',
     title: '',
@@ -13,6 +13,7 @@ const EditProduct = ({ product, updateProduct, onCancel }) => {
 
   const [sizeInput, setSizeInput] = useState('');
   const [priceInput, setPriceInput] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (product) setForm(product);
@@ -48,13 +49,31 @@ const EditProduct = ({ product, updateProduct, onCancel }) => {
   };
 
   const handleSaveChanges = () => {
-    updateProduct(form);
-    onCancel();
+    const { title, brand, description, sizes } = form;
+
+    if (title && brand && description && sizes.length) {
+      const duplicateProduct = existingProducts.some(
+        (existingProduct) =>
+          existingProduct.id !== form.id && 
+          existingProduct.brand === brand &&
+          existingProduct.title === title
+      );
+
+      if (duplicateProduct) {
+        setErrorMessage("Product with this brand and title already exists.");
+      } else {
+        updateProduct(form);
+       
+      }
+    } else {
+      setErrorMessage("Please fill in all required fields.");
+    }
   };
 
   return (
     <div id="product-form">
       <h3>Edit Product</h3>
+      
       <input name="title" type="text" placeholder="Title" value={form.title} onChange={handleChange} />
       <input name="brand" type="text" placeholder="Brand" value={form.brand} onChange={handleChange} />
       <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} />
@@ -72,11 +91,12 @@ const EditProduct = ({ product, updateProduct, onCancel }) => {
           {form.sizes.map((sizeObj, index) => (
             <div className='a' key={index} >
               <span>{sizeObj.size}: {sizeObj.price} Rs</span>
-              <button  className='remove' onClick={() => handleDeleteSize(index)}>Delete</button>
+              <button className='remove' onClick={() => handleDeleteSize(index)}>Delete</button>
             </div>
           ))}
         </div>
       </div>
+      {<p className='error' >{errorMessage}</p>}         
       <button className='save' onClick={handleSaveChanges}>Save Changes</button>{' '}
       <button className='cancel' onClick={onCancel}>Cancel</button>
     </div>

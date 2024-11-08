@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { productsData } from './products';
 import { ProductCard } from './ProductCard';
 import AddProduct from './AddProduct';
@@ -8,45 +8,60 @@ export const ProductList = () => {
   const [products, setProducts] = useState(productsData);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const editFormRef = useRef(null);
 
   const addProduct = (newProduct) => {
-    setProducts([...products, { ...newProduct}]); 
+    setProducts([...products, { ...newProduct }]);
     setShowForm(false);
   };
 
-  const HandlestartEditingProduct = (product) => {
+  const handleStartEditingProduct = (product) => {
     setEditingProduct(product);
   };
 
-  const HandleupdateProduct = (updatedProduct) => {
+  const handleUpdateProduct = (updatedProduct) => {
     setProducts(products.map(product =>
       product.id === updatedProduct.id ? updatedProduct : product
     ));
     setEditingProduct(null);
   };
 
-  const HandledeleteProduct = (productId) => {
+  const handleDeleteProduct = (productId) => {
     setProducts(products.filter(product => product.id !== productId));
   };
+
+  useEffect(() => {
+    if (editingProduct && editFormRef.current) {
+      editFormRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [editingProduct]);
 
   return (
     <div className="App">
       <button onClick={() => setShowForm(true)}>+</button>
-      {showForm && <AddProduct addProduct={addProduct} />}
-      {editingProduct && (
-        <EditProduct
-          product={editingProduct}
-          updateProduct={HandleupdateProduct}
-          onCancel={() => setEditingProduct(null)}
+      {showForm && (
+        <AddProduct
+          addProduct={addProduct}
+          existingProducts={products}
         />
+      )}
+      {editingProduct && (
+        <div ref={editFormRef}>
+          <EditProduct
+            product={editingProduct}
+            updateProduct={handleUpdateProduct}
+            existingProducts={products}
+            onCancel={() => setEditingProduct(null)}
+          />
+        </div>
       )}
       <div id="product-container">
         {products.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
-            onEdit={() => HandlestartEditingProduct(product)}
-            onDelete={() => HandledeleteProduct(product.id)} 
+            onEdit={() => handleStartEditingProduct(product)}
+            onDelete={() => handleDeleteProduct(product.id)}
           />
         ))}
       </div>

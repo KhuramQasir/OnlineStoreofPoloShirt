@@ -136,7 +136,7 @@ body {
   gap: 20px;
 }
 
-/* Product Card */
+
 .maindiv {
   width: 250px;
   background-color: #fff;
@@ -451,6 +451,11 @@ border-radius: 5px;
 object-fit: cover;
 }
 
-a{ display: flex;
+.a{ display: flex;
    justify-items: center;
     gap: 8px }
+
+
+.error{
+   color: red
+}
