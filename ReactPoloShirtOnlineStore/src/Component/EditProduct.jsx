@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const AddProduct = ({ addProduct }) => {
+const EditProduct = ({ product, updateProduct, onCancel }) => {
   const [form, setForm] = useState({
+    id: '',
     title: '',
     brand: '',
     description: '',
@@ -12,6 +13,10 @@ const AddProduct = ({ addProduct }) => {
 
   const [sizeInput, setSizeInput] = useState('');
   const [priceInput, setPriceInput] = useState('');
+
+  useEffect(() => {
+    if (product) setForm(product);
+  }, [product]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,13 +40,6 @@ const AddProduct = ({ addProduct }) => {
     }
   };
 
-  const handleAddProduct = () => {
-    const { title, brand, description, sizes } = form;
-    if (title && brand && description && sizes.length) {
-      addProduct(form);
-      resetForm();
-    }
-  };
   const handleDeleteSize = (index) => {
     setForm(prev => ({
       ...prev,
@@ -49,22 +47,14 @@ const AddProduct = ({ addProduct }) => {
     }));
   };
 
-  const resetForm = () => {
-    setForm({
-      title: '',
-      brand: '',
-      description: '',
-      discount: '',
-      images: [],
-      sizes: [],
-    });
-    setSizeInput('');
-    setPriceInput('');
+  const handleSaveChanges = () => {
+    updateProduct(form);
+    onCancel();
   };
 
   return (
     <div id="product-form">
-      <h3>Add New Product</h3>
+      <h3>Edit Product</h3>
       <input name="title" type="text" placeholder="Title" value={form.title} onChange={handleChange} />
       <input name="brand" type="text" placeholder="Brand" value={form.brand} onChange={handleChange} />
       <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} />
@@ -77,6 +67,7 @@ const AddProduct = ({ addProduct }) => {
         <input type="text" placeholder="Size" value={sizeInput} onChange={e => setSizeInput(e.target.value)} />
         <input type="number" placeholder="Price (Rs)" value={priceInput} onChange={e => setPriceInput(e.target.value)} />
         <button className='addsize' onClick={handleAddSize}>Add Size</button>
+        
         <div id="size-list">
           {form.sizes.map((sizeObj, index) => (
             <div className='a' key={index} >
@@ -86,9 +77,10 @@ const AddProduct = ({ addProduct }) => {
           ))}
         </div>
       </div>
-      <button className='submit' onClick={handleAddProduct}>Submit Product</button>
+      <button className='save' onClick={handleSaveChanges}>Save Changes</button>{' '}
+      <button className='cancel' onClick={onCancel}>Cancel</button>
     </div>
   );
 };
 
-export default AddProduct;
+export default EditProduct;
