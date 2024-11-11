@@ -240,6 +240,7 @@ body {
 }
 
 #bag {
+  margin: 2px;
   background-color: #007bff;
   color: #fff;
   padding: 10px;
@@ -343,6 +344,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  margin: 2px;
   transition: background-color 0.3s;}
 
 .submit:hover {
@@ -364,6 +366,7 @@ body {
 }
 
 .cancel {
+  margin: 2px;
   background-color: #0056b3;
   color: #fff;
   padding: 10px;
@@ -408,6 +411,7 @@ border-radius: 3px;
 }
 
 .delete-btn{
+  margin: 2px;
   background-color: #ff4d4d;
   color: white;
   border: none;
@@ -428,6 +432,7 @@ font-size: 14px;
 }
 
 .update-btn{
+  margin: 2px;
 background-color: #0056b3;
 color: #fff;
 padding: 10px;

@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { productsData } from './products';
 import { ProductCard } from './ProductCard';
-import AddProduct from './AddProduct';
-import EditProduct from './EditProduct';
+import ProductForm from './ProductForm';
 
 export const ProductList = () => {
   const [products, setProducts] = useState(productsData);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const editFormRef = useRef(null);
+  const formRef = useRef(null);
 
   const addProduct = (newProduct) => {
     setProducts([...products, { ...newProduct }]);
-    setShowForm(false);
+    setShowForm(false); 
   };
 
   const handleStartEditingProduct = (product) => {
     setEditingProduct(product);
+    setShowForm(true); 
   };
 
   const handleUpdateProduct = (updatedProduct) => {
@@ -24,34 +24,36 @@ export const ProductList = () => {
       product.id === updatedProduct.id ? updatedProduct : product
     ));
     setEditingProduct(null);
+    setShowForm(false); 
   };
 
   const handleDeleteProduct = (productId) => {
     setProducts(products.filter(product => product.id !== productId));
   };
 
+  const handleFormCancel = () => {
+    setEditingProduct(null);
+    setShowForm(false);
+  };
+
   useEffect(() => {
-    if (editingProduct && editFormRef.current) {
-      editFormRef.current.scrollIntoView({ behavior: 'smooth' });
+    if ((showForm || editingProduct) && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [editingProduct]);
+  }, [showForm, editingProduct]);
 
   return (
     <div className="App">
       <button onClick={() => setShowForm(true)}>+</button>
-      {showForm && (
-        <AddProduct
-          addProduct={addProduct}
-          existingProducts={products}
-        />
-      )}
-      {editingProduct && (
-        <div ref={editFormRef}>
-          <EditProduct
-            product={editingProduct}
-            updateProduct={handleUpdateProduct}
+      {(showForm || editingProduct) && (
+        <div ref={formRef}>
+          <ProductForm
             existingProducts={products}
-            onCancel={() => setEditingProduct(null)}
+            onAdd={addProduct}
+            onSave={ handleUpdateProduct }
+            product={editingProduct}
+            onCancel={handleFormCancel}
+            isEditMode={!!editingProduct}
           />
         </div>
       )}
